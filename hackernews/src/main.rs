@@ -28,7 +28,10 @@ fn App() -> Element {
 fn Blog(id: i32) -> Element {
     rsx! {
         Link { to: Route::Home {}, "Go to counter" }
-        "Blog post {id}"
+        div {
+            class: "flex flex-col items-center justify-center h-screen",
+            h1 { class: "text-3xl p-4", "Blog post {id}" }
+        }
     }
 }
 
