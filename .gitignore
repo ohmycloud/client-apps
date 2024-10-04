@@ -1,3 +1,5 @@
 /target
 .idea
 hackernews/target
+hackernews/node_modules
+hackernews/dist
