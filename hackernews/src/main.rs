@@ -1,9 +1,10 @@
 #![allow(non_snake_case)]
 
 mod story;
-
+mod ui;
 use dioxus::prelude::*;
 use dioxus_logger::tracing::{info, Level};
+use crate::ui::App;
 
 #[derive(Clone, Routable, Debug, PartialEq)]
 enum Route {
@@ -22,11 +23,6 @@ fn main() {
     launch(App);
 }
 
-fn App() -> Element {
-    rsx! {
-        Router::<Route> {}
-    }
-}
 
 #[component]
 fn Blog(id: i32) -> Element {
