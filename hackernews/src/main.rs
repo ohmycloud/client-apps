@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 
+mod story;
+
 use dioxus::prelude::*;
 use dioxus_logger::tracing::{info, Level};
 
