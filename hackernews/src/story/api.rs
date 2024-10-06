@@ -55,7 +55,6 @@ pub async fn get_story_comment(item: StoryItem) -> Result<StoryData> {
 
 #[cfg(test)]
 mod tests {
-    use anyhow::anyhow;
     use super::*;
 
     #[tokio::test]

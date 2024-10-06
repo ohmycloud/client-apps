@@ -2,20 +2,15 @@
 
 use dioxus::dioxus_core::Element;
 use dioxus::prelude::*;
-use crate::story::{StoryData, StoryItem};
+use crate::story::Comment;
 
-pub fn StoryComment(item: StoryItem) -> Element {
+#[component]
+pub fn StoryComment(comment: Comment) -> Element {
     rsx! {
         li {
-            article { class: "mt-8 leading-7 tracking-wider text-gray-500",
-                p { "Hi Akhil," }
-                p {
-                    "Design and develop enterprise-facing UI and consumer-facing UI as well as\n            REST API\n            backends.Work with\n            Product Managers and User Experience designers to create an appealing user experience for desktop web and\n            mobile web."
-                }
-                footer { class: "mt-12",
-                    p { "Thanks & Regards," }
-                    p { "Alexandar" }
-                }
+            article { class: "p-4 leading-7 tracking-wider text-gray-500",
+            span { "{comment.by} {comment.time} | next [-]" }
+            div { dangerous_inner_html: comment.text }
             }
         }
     }
