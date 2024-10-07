@@ -1,14 +1,14 @@
 #![allow(non_snake_case)]
 
-use std::ops::Deref;
-use dioxus::prelude::*;
-use crate::story::{get_top_stories, StoryData};
-use crate::ui::story_comment::StoryComment;
-
-
 mod story_item;
 mod story_comment;
 mod stories;
+
+use std::ops::Deref;
+use dioxus::prelude::*;
+use crate::story::{get_top_stories, StoryData};
+use crate::ui::stories::Stories;
+use crate::ui::story_comment::StoryComment;
 
 pub fn App() -> Element {
     use_context_provider(|| Signal::new(CommentState::Unset));
@@ -26,6 +26,7 @@ pub fn App() -> Element {
     }
 }
 
+#[derive(Debug, Clone)]
 pub enum CommentState {
     Unset,
     Loading,
@@ -34,15 +35,11 @@ pub enum CommentState {
 
 #[component]
 pub fn Comments() -> Element {
-    let comments_state = use_context::<Signal<CommentState>>();
-    let comment_state = comments_state.read().deref();
+    let comment_state = use_context::<Signal<CommentState>>();
 
-    match &comment_state {
+    match comment_state() {
         CommentState::Unset => rsx! {
-            div {
-                class: "mt-6",
-                p { "Select a story to view comments" }
-            }
+            div {}
         },
         CommentState::Loading => rsx! {
             div {

@@ -1,12 +1,9 @@
-use dioxus::core_macro::{component, rsx};
-use dioxus::dioxus_core::Element;
-use dioxus::hooks::use_resource;
-use dioxus::prelude::Readable;
+use dioxus::prelude::*;
 use crate::story::get_top_stories;
 use crate::ui::story_item::StoryItem;
 
 #[component]
-fn Stories() -> Element {
+pub fn Stories() -> Element {
     let stories = use_resource(move || get_top_stories(20));
 
     match &*stories.read_unchecked() {
