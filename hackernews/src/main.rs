@@ -4,7 +4,7 @@ mod story;
 mod ui;
 use dioxus::prelude::*;
 use dioxus_logger::tracing::{info, Level};
-use crate::ui::App;
+use hackernews::App;
 
 fn main() {
     // Init logger
