@@ -1,7 +1,5 @@
 #![allow(non_snake_case)]
 
-mod story;
-mod ui;
 use dioxus::prelude::*;
 use dioxus_logger::tracing::{info, Level};
 use hackernews::App;
