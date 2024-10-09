@@ -1,7 +1,10 @@
 mod commands;
 mod utils;
 
-use tauri::{App, Builder, WebviewUrl, WebviewWindowBuilder, Window, WindowEvent, Wry};
+use tauri::{App, AppHandle, Builder, Runtime, WebviewUrl, WebviewWindowBuilder, Window, WindowEvent, Wry};
+use tauri::menu::{CheckMenuItem, MenuItem};
+use tauri::menu::SubmenuBuilder;
+use tauri::utils::config::TrayIconConfig;
 use tauri::Webview;
 use tauri::webview::PageLoadPayload;
 use tauri_plugin_log::{Target, TargetKind};
@@ -85,4 +88,43 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+fn setup_menu<R: Runtime>(app: &AppHandle<R>) -> Result<(), tauri::Error> {
+    // create submenus
+    let file_menu = SubmenuBuilder::with_id(app, "file", "File")
+        .item(&MenuItem::new(app, "Open", true, Some("CmdOrCtrl+O"))?)
+        .item(&MenuItem::new(app, "Save", true, Some("CmdOrCtrl+S"))?)
+        .item(&MenuItem::new(app, "Save As", true, Some("CmdOrCtrl+Shift+S"))?)
+        .separator()
+        .quit();
+
+    let edit_menu = SubmenuBuilder::with_id(app, "edit", "Edit")
+        .item(&MenuItem::new(app, "Process", true, Some("CmdOrCtrl+P"))?)
+        .separator()
+        .undo()
+        .redo()
+        .separator()
+        .cut()
+        .copy()
+        .paste()
+        .separator()
+        .select_all()
+        .item(&CheckMenuItem::new(app, "Check Me", true, true, None)?);
+
+    let tray_menu = SubmenuBuilder::with_id(app, "tray", "Tray")
+        .item(&MenuItem::new(app, "Open", true, None)?)
+        .item(&MenuItem::new(app, "Hide", true, None)?)
+        .separator()
+        .quit();
+
+    let icon_path = app.default_window_icon();
+    let mut icon = TrayIconConfig::default();
+    icon.id = Some("HackerNews".to_string());
+    icon.tooltip = Some("Hacker News".to_string());
+
+    Ok(())
+
+    // create menu, add menu to tray, add menu to window
+
 }
