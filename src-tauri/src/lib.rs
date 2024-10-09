@@ -1,9 +1,10 @@
 mod commands;
 mod utils;
 
-use tauri::{App, AppHandle, Builder, Runtime, WebviewUrl, WebviewWindowBuilder, Window, WindowEvent, Wry};
-use tauri::menu::{CheckMenuItem, MenuItem};
+use tauri::{App, AppHandle, Builder, Manager, Runtime, WebviewUrl, WebviewWindowBuilder, Window, WindowEvent, Wry};
+use tauri::menu::{CheckMenuItem, Menu, MenuItem};
 use tauri::menu::SubmenuBuilder;
+use tauri::tray::{MouseButton, TrayIconBuilder, TrayIconEvent};
 use tauri::utils::config::TrayIconConfig;
 use tauri::Webview;
 use tauri::webview::PageLoadPayload;
@@ -21,6 +22,9 @@ fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     {
         handle.plugin(tauri_plugin_window_state::Builder::default().build())?
     }
+
+    setup_menu(handle)?;
+
     let mut builder = WebviewWindowBuilder::new(
         app,
         "mainm",
@@ -97,7 +101,8 @@ fn setup_menu<R: Runtime>(app: &AppHandle<R>) -> Result<(), tauri::Error> {
         .item(&MenuItem::new(app, "Save", true, Some("CmdOrCtrl+S"))?)
         .item(&MenuItem::new(app, "Save As", true, Some("CmdOrCtrl+Shift+S"))?)
         .separator()
-        .quit();
+        .quit()
+        .build()?;
 
     let edit_menu = SubmenuBuilder::with_id(app, "edit", "Edit")
         .item(&MenuItem::new(app, "Process", true, Some("CmdOrCtrl+P"))?)
@@ -110,18 +115,39 @@ fn setup_menu<R: Runtime>(app: &AppHandle<R>) -> Result<(), tauri::Error> {
         .paste()
         .separator()
         .select_all()
-        .item(&CheckMenuItem::new(app, "Check Me", true, true, None)?);
+        .item(&CheckMenuItem::new(app, "Check Me", true, true, None::<&str>)?)
+        .build()?;
 
     let tray_menu = SubmenuBuilder::with_id(app, "tray", "Tray")
-        .item(&MenuItem::new(app, "Open", true, None)?)
-        .item(&MenuItem::new(app, "Hide", true, None)?)
+        .item(&MenuItem::new(app, "Open", true, None::<&str>)?)
+        .item(&MenuItem::new(app, "Hide", true, None::<&str>)?)
         .separator()
-        .quit();
+        .quit()
+        .build()?;
 
-    let icon_path = app.default_window_icon();
-    let mut icon = TrayIconConfig::default();
-    icon.id = Some("HackerNews".to_string());
-    icon.tooltip = Some("Hacker News".to_string());
+    let icon = app.default_window_icon().unwrap().clone();
+    TrayIconBuilder::with_id("HackerNews-Tray")
+        .tooltip("Hacker News")
+        .icon(icon)
+        .menu(&tray_menu)
+        .menu_on_left_click(true)
+        .on_tray_icon_event(|tray, event| {
+            info!("Tray icon event: {:?}", event);
+            if let TrayIconEvent::Click {button: MouseButton::Right, ..} = event {
+                tray.app_handle()
+                    .get_webview_window("main")
+                    .unwrap()
+                    .show()
+                    .unwrap();
+            }
+        })
+        .build(app)?;
+
+    let menu = Menu::with_items(app, &[&file_menu, &edit_menu])?;
+    app.set_menu(menu)?;
+    app.on_menu_event(|app, event| {
+        info!("menu event: {:?}", event);
+    });
 
     Ok(())
 
