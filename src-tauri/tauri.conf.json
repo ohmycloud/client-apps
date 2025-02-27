@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "identifier": "com.hackernews.app",
   "build": {
-    "beforeDevCommand": "cd ../hackernews && dx serve --port 8080 --hot-reload",
+    "beforeDevCommand": "cd ../hackernews && dx serve --port 8080 --hot-reload true",
     "devUrl": "http://localhost:8080",
     "beforeBuildCommand": "dx build --release",
     "frontendDist": "../hackernews/dist"

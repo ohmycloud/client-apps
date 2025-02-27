@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use crate::story::get_top_stories;
-use crate::ui::story_item::StoryItem;
+use crate::ui::story_item::StoryItemElement;
 
 #[component]
 pub fn Stories() -> Element {
@@ -10,7 +10,7 @@ pub fn Stories() -> Element {
         Some(Ok(stories)) => rsx! {
             ul {
                 for story in stories {
-                    StoryItem {
+                    StoryItemElement {
                         story: story.clone()
                     }
                 }

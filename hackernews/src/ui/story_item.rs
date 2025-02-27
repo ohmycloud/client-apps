@@ -6,7 +6,7 @@ use crate::story::{get_story_comment, StoryData, StoryItem};
 use crate::ui::CommentState;
 
 #[component]
-pub fn StoryItem(story: StoryItem) -> Element {
+pub fn StoryItemElement(story: StoryItem) -> Element {
     let comments_state = use_context::<Signal<CommentState>>();
     // cache of the already loaded comments: Option<StoryData>
     let full_story = use_signal(|| None);
@@ -20,8 +20,8 @@ pub fn StoryItem(story: StoryItem) -> Element {
             div { class: "italic text-gray-400 text-md",
                 span { "{story.score} points by {story.by} {story.time} | " }
                 a { href: "#",
-                    prevent_default: "onclick",
                     onclick: move |event| {
+                        event.prevent_default();
                         info!("Clicked on story: {} with event: {:?}", story.title, event);
                         load_comments(comments_state, full_story, story.clone())
                     },
